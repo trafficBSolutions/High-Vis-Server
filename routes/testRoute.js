@@ -7,7 +7,7 @@ const Testimonial = require('../models/test');
 router.use(
     cors({
         credentials: true,
-        origin: 'http://localhost:3000',
+        origin: 'https://www.highvisibilitydetailing.com',
     })
 );
 router.get('/testimonials/latest', async (req, res) => {
