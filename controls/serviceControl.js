@@ -11,6 +11,7 @@ const submitService = async (req, res) => {
             make,
             model,
             color,
+            city,
             services,
             notes
         } = req.body;
@@ -22,6 +23,7 @@ const submitService = async (req, res) => {
             make,
             model,
             color,
+            city,
             services,
             notes
         });
@@ -59,6 +61,7 @@ const submitService = async (req, res) => {
       </ul>
 
       <h3>Additional Info:</h3>
+      <li><strong>Location:</strong> ${city}</li>
       <p>${notes}</p>
 
       <p style="font-size: 14px;">High Visibility Detailing Phone: (706) 506-1888<br><a href="https://www.highvisibilitydetailing.com/">www.highvisibilitydetailing.com</a></p>
