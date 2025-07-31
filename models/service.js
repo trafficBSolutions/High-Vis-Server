@@ -30,7 +30,7 @@ const serviceSchema = new mongoose.Schema({
     },
     city: {
         required: true,
-        type" String
+        type: String
     },
     services: {
         type: [String],
