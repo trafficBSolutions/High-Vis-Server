@@ -28,15 +28,14 @@ const serviceSchema = new mongoose.Schema({
         required: true,
         type: String
     },
-    city: {
-        required: true,
-        type: String
-    },
     services: {
         type: [String],
         required: true
     },
     notes: {
+        type: String
+    },
+    photos: {
         type: String
     }
 });
