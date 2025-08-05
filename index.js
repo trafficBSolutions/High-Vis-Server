@@ -6,7 +6,7 @@ const rateLimit = require('express-rate-limit');
 const xss = require('xss-clean');
 const compression = require('compression');
 const cors = require('cors');
-
+const sanitizeHtml = require('sanitize-html');
 // Create Express app
 const app = express();
 
@@ -14,7 +14,16 @@ const app = express();
 app.use(helmet()); // Adds secure HTTP headers
 app.use(xss()); // Prevent XSS
 app.use(compression()); // GZIP compression
-
+app.use((req, res, next) => {
+  if (req.body) {
+    for (const key in req.body) {
+      if (typeof req.body[key] === 'string') {
+        req.body[key] = sanitizeHtml(req.body[key]);
+      }
+    }
+  }
+  next();
+});
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 mins
   max: 100,
