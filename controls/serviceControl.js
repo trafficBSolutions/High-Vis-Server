@@ -11,37 +11,46 @@ const submitService = async (req, res) => {
             make,
             model,
             color,
-            city,
             services,
-            notes
+            notes,
         } = req.body;
-        const serviceUser = await service.create({
-            name,
-            email,
-            phone,
-            vehicleType,
-            make,
-            model,
-            color,
-            city,
-            services,
-            notes
-        });
-        
-        const mailOptions = {
-            from: 'High Visibility Detailing <highvisibilitydetailing@gmail.com>',
-            to: email,
-            bcc: [{ name: 'High Visibility Detailing', address: myEmail },
-               ],
-            subject: 'JOB REQUEST',
-           html: `
+const photos = req.files && req.files['photos']
+  ? req.files['photos'].map(file => ({
+      filename: file.originalname,
+      path: `./files/${file.filename}`
+    }))
+  : [];
+
+const Photos = photos.length > 0 ? photos[0].path : null; // Save first photo filename to DB
+  const parsedServices = Array.isArray(services)
+  ? services
+  : typeof services === 'string' && services.length > 0
+    ? [services]
+    : [];
+const serviceUser = await service.create({
+  name,
+  email,
+  phone,
+  vehicleType,
+  make,
+  model,
+  color,
+  services: parsedServices,
+  notes,
+  photos: Photos
+});
+const mailOptions = {
+  from: 'High Visibility Detailing <highvisibilitydetailing@gmail.com>',
+  to: email,
+  bcc: [{ name: 'High Visibility Detailing', address: myEmail }],
+  subject: 'JOB REQUEST',
+  html: `
 <html>
-  <body style="...">
-    <div style="...">
-      <h1 style="...">JOB REQUEST</h1>
-      
+  <body style="font-family:sans-serif;padding:10px;">
+    <div>
+      <h1>JOB REQUEST</h1>
       <p>Hi <strong>${name}</strong>,</p>
-      Your job has been submitted! <br>
+      <p>Your job has been submitted!<br>
       If you have any questions or concerns regarding your job, please call (706) 506-1888.</p>
 
       <h3>Summary:</h3>
@@ -56,20 +65,24 @@ const submitService = async (req, res) => {
       </ul>
 
       <h3>Services Needed:</h3>
-      <ul>
-        ${services && services.length > 0 ? services.map(service => `<li>${service}</li>`).join('') : '<li>No services listed</li>'}
-      </ul>
+<ul>
+  ${parsedServices.length > 0
+    ? parsedServices.map(service => `<li>${service}</li>`).join('')
+    : '<li>No services listed</li>'}
+</ul>
+
 
       <h3>Additional Info:</h3>
-      <li><strong>Location:</strong> ${city}</li>
       <p>${notes}</p>
 
-      <p style="font-size: 14px;">High Visibility Detailing Phone: (706) 506-1888<br><a href="https://www.highvisibilitydetailing.com/">www.highvisibilitydetailing.com</a></p>
+      <p style="font-size: 14px;">High Visibility Detailing<br>Phone: (706) 506-1888<br><a href="https://www.highvisibilitydetailing.com/">www.highvisibilitydetailing.com</a></p>
     </div>
   </body>
 </html>
-`
-          };
+`,
+  attachments: photos
+};
+
         transporter.sendMail(mailOptions, (error, info) => {
             if (error) {
                 console.error('Error sending email notification:', error);
