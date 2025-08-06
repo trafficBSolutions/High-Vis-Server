@@ -8,7 +8,7 @@ const cors = require('cors');
 const sanitizeHtml = require('sanitize-html');
 // Create Express app
 const app = express();
-
+app.set('trust proxy', true); // ✅ Allow Express to trust X-Forwarded-* headers
 // ✅ Security Middleware
 app.use(helmet()); // Adds secure HTTP headers
 app.use(compression()); // GZIP compression
@@ -67,3 +67,4 @@ app.use('/', require('./routes/serviceRoute'));
 // ✅ Start Server
 const port = process.env.PORT || 8000;
 app.listen(port, '0.0.0.0', () => console.log(`🚀 Server running on port ${port}`));
+
