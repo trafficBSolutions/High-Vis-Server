@@ -10,7 +10,7 @@ const fs = require('fs'); // Import the 'fs' module for file system operations
 router.use(
     cors({
         credentials: true,
-        origin: ['https://www.highvisibilitydetailing.com', 'http://localhost:3000']
+        origin: ['https://www.highvisibilitydetailing.com']
     })
 );
 
@@ -54,3 +54,4 @@ router.post('/service-quote', upload, submitService);
     
 
 module.exports = router;
+
