@@ -31,8 +31,7 @@ const limiter = rateLimit({
 app.use(limiter);
 
 const allowedOrigins = [
-  'https://www.highvisibilitydetailing.com',
-  'http://localhost:3000'
+  'https://www.highvisibilitydetailing.com'
 ];
 
 app.use(cors({
@@ -67,5 +66,6 @@ app.use('/', require('./routes/serviceRoute'));
 // ✅ Start Server
 const port = process.env.PORT || 8000;
 app.listen(port, '0.0.0.0', () => console.log(`🚀 Server running on port ${port}`));
+
 
 
