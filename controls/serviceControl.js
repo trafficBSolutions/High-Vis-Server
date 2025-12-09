@@ -17,7 +17,7 @@ const submitService = async (req, res) => {
 const photos = req.files && req.files['photos']
   ? req.files['photos'].map(file => ({
       filename: file.originalname,
-      path: `./files/${file.filename}`
+      path: file.path
     }))
   : [];
 
