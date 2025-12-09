@@ -39,10 +39,10 @@ const serviceUser = await service.create({
   notes,
   photos: Photos
 });
-const mailOptions = {
+// Send email to customer without attachments
+const customerMailOptions = {
   from: 'High Visibility Detailing <highvisibilitydetailing@gmail.com>',
   to: email,
-  bcc: [{ name: 'High Visibility Detailing', address: myEmail }],
   subject: 'JOB REQUEST',
   html: `
 <html>
@@ -71,7 +71,6 @@ const mailOptions = {
     : '<li>No services listed</li>'}
 </ul>
 
-
       <h3>Additional Info:</h3>
       <p>${notes}</p>
 
@@ -79,17 +78,45 @@ const mailOptions = {
     </div>
   </body>
 </html>
-`,
-  attachments: photos
+`
 };
 
-        transporter.sendMail(mailOptions, (error, info) => {
-            if (error) {
-                console.error('Error sending email notification:', error);
-            } else {
-                console.log('Email notification sent:', info.response);
-            }
-        });
+// Send email to business with attachments (split if needed)
+const businessMailOptions = {
+  from: 'High Visibility Detailing <highvisibilitydetailing@gmail.com>',
+  to: myEmail,
+  subject: `New Job Request - ${name}`,
+  html: `
+<html>
+  <body style="font-family:sans-serif;padding:10px;">
+    <div>
+      <h1>NEW JOB REQUEST</h1>
+      <h3>Customer Details:</h3>
+      <ul>
+        <li><strong>Name:</strong> ${name}</li>
+        <li><strong>Email:</strong> ${email}</li>
+        <li><strong>Phone:</strong> ${phone}</li>
+        <li><strong>Vehicle:</strong> ${vehicleType} - ${make} ${model} (${color})</li>
+      </ul>
+      <h3>Services Requested:</h3>
+      <ul>
+        ${parsedServices.map(service => `<li>${service}</li>`).join('')}
+      </ul>
+      <h3>Notes:</h3>
+      <p>${notes || 'None'}</p>
+      ${photos.length > 0 ? `<p><strong>${photos.length} photo(s) attached</strong></p>` : ''}
+    </div>
+  </body>
+</html>
+`,
+  attachments: photos.slice(0, 5) // Limit to 5 photos to stay under Gmail limit
+};
+
+        // Send customer confirmation
+        await transporter.sendMail(customerMailOptions);
+        
+        // Send business notification
+        await transporter.sendMail(businessMailOptions);
 
         const response = {
             message: 'Express submitted successfully',
